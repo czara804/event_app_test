@@ -19,15 +19,23 @@ class EventsController < ApplicationController
     else 
       render new 
     end 
-    
   end
 
   def edit
-    
   end
+  
   def update
+    if @event.update
+      redirect_to @event
+    else 
+      render :edit
+    end 
   end
+  
   def destroy
+    @event.delete
+
+    redirect_to events_path
   end
 
   private
