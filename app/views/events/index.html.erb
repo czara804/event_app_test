@@ -1,13 +1,15 @@
 <h1>Current Events</h1>
-
-<%= link_to "Add an event", new_event_path%>
-
+<% if user_signed_in? %>
+  <%= link_to "Add an event", new_event_path%>
+<% end %>
 
 <% @events.each do |event|%>
 <p>
   <%= event.name %>
   <%= link_to 'View', event_path(event) %> |
-  <%= link_to 'Edit', edit_event_path(event) %> |
-  <%= link_to 'Delete', event_path(event), method: :delete, data: {confirm: 'Are you sure?'} %>
+  <% if user_signed_in? && event.user_id == current_user.id %>
+    <%= link_to 'Edit', edit_event_path(event) %> |
+    <%= link_to 'Delete', event_path(event), method: :delete, data: {confirm: 'Are you sure?'} %>
+  <% end %>
 </p>
 <% end %>

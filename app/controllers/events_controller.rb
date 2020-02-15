@@ -1,12 +1,15 @@
 class EventsController < ApplicationController
   before_action :authenticate_user!, only: [:new, :create, :edit, :update, :destroy]
-  before_action :find_event, only: [:show, :edit, :update, :destroy]
+  before_action :find_event, only: [:edit, :update, :destroy]
+  before_action :authorise_user!, only: [:update, :edit, :destroy]
+  
 
   def index
     @events = Event.all
   end
 
   def show
+    @event = Event.includes(attendances:[:user]).find(params[:id])
   end 
 
   def new
@@ -15,6 +18,8 @@ class EventsController < ApplicationController
 
   def create
     @event = Event.new(event_params)
+    @event.user_id = current_user.id
+    
     if @event.save 
       redirect_to @event
     else 
@@ -46,5 +51,10 @@ class EventsController < ApplicationController
 
   def find_event
     @event = Event.find(params[:id])
+  end
+
+  def authorise_user!
+    return true if current_user.id == @event.user_id
+    
   end
 end
